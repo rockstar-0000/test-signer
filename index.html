@@ -45,7 +45,7 @@ contract Verify {
     // sign hashed message
     const signature = await ethereum.request({
       method: "personal_sign",
-      params: [hashedMessage, "0x802A58454Be713142f5188b8264e3CC9478F4935"],
+      params: [hashedMessage, accounts[0]],
     });
     console.log({ signature });
 
