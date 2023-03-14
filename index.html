@@ -1,0 +1,60 @@
+<style>
+  body {
+    background-color: cornsilk;
+  }
+</style>
+
+<pre>
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Verify {
+
+    function VerifyMessage(bytes32 _hashedMessage, uint8 _v, bytes32 _r, bytes32 _s) public pure returns (address) {
+        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
+        address signer = ecrecover(prefixedHashMessage, _v, _r, _s);
+        return signer;
+    }
+
+}
+
+</pre>
+
+<button onClick="signMessage()">Sign Message</button>
+
+<a href="https://github.com/leon-do/ecrecover"> source </a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0-rc.0/web3.min.js" integrity="sha512-/PTXSvaFzmO4So7Ghyq+DEZOz0sNLU4v1DP4gMOfY3kFu9L/IKoqSHZ6lNl3ZoZ7wT20io3vu/U4IchGcGIhfw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  async function signMessage() {
+    if (!window.ethereum) return alert("Please Install Metamask");
+
+    // connect and get metamask account
+    const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+
+    // message to sign
+    const message = "hello";
+    console.log({ message });
+
+    // hash message
+    const hashedMessage = Web3.utils.sha3(message);
+    console.log({ hashedMessage });
+
+    // sign hashed message
+    const signature = await ethereum.request({
+      method: "personal_sign",
+      params: [hashedMessage, "0x802A58454Be713142f5188b8264e3CC9478F4935"],
+    });
+    console.log({ signature });
+
+    // split signature
+    const r = signature.slice(0, 66);
+    const s = "0x" + signature.slice(66, 130);
+    const v = parseInt(signature.slice(130, 132), 16);
+    console.log({ r, s, v });
+
+    alert(signature);
+  }
+</script>
